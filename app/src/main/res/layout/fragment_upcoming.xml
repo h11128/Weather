@@ -20,19 +20,17 @@
         android:layout_height="wrap_content"
         tools:context=".ui.UpComingFragment">
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:refreshing ="@{viewModel.isRefreshing}"
-            android:onRefreshListener="@{() -> viewModel.onResume()}">
+            app:layout_constraintTop_toTopOf="parent">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

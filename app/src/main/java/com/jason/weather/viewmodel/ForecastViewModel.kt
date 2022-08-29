@@ -1,10 +1,9 @@
 package com.jason.weather.viewmodel
 
-import android.util.Log
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
-import com.jason.weather.model.Condition
 import com.jason.weather.repo.WeatherRepository
+import com.jason.weather.ui.ForecastListAdapter
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -13,10 +12,10 @@ import javax.inject.Singleton
 
 @Singleton
 class ForecastViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val forecastListAdapter: ForecastListAdapter
 ) : ViewModel() {
-    val forecastConditionList = MutableList(10) { Condition.emptyCondition }
-    val isRefreshing = ObservableBoolean(false)
+    private val forecastConditionList = forecastListAdapter.list
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -32,16 +31,23 @@ class ForecastViewModel @Inject constructor(
 
             }
             .subscribe({
-                           forecastConditionList.clear()
-                           forecastConditionList.addAll(it)
-                       },
-                       { it.printStackTrace() })
+                forecastConditionList.clear()
+                forecastConditionList.addAll(it)
+                forecastListAdapter.notifyItemRangeChanged(0, forecastConditionList.size)
+            },
+                {
+                    it.printStackTrace()
+                })
             .also { compositeDisposable.add(it) }
 
     fun onResume() {
-        isRefreshing.set(false)
         compositeDisposable.add(getTenDayWeatherFromNetwork())
 
+    }
+
+    fun onRefresh(): Completable = Completable.fromCallable {
+        compositeDisposable.clear()
+        compositeDisposable.add(getTenDayWeatherFromNetwork())
     }
 
     fun onPause() {

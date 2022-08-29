@@ -7,15 +7,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.jason.weather.R
 import com.jason.weather.WeatherApplication
 import com.jason.weather.databinding.ActivityMainBinding
-import com.jason.weather.viewmodel.MainViewModel
-import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
-
-    @Inject
-    lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +22,6 @@ class MainActivity : AppCompatActivity() {
                         else -> tab.text = "UpComing"
                     }
                 }.attach()
-                it.viewModel = viewModel
             }
 
 //        val fab: FloatingActionButton = binding.fab

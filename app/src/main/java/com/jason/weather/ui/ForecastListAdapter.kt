@@ -1,6 +1,5 @@
 package com.jason.weather.ui
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -8,16 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jason.weather.R
 import com.jason.weather.databinding.ItemForecastBinding
 import com.jason.weather.model.Condition
-import com.jason.weather.viewmodel.ForecastViewModel
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ForecastListAdapter @Inject constructor(
-    private val forecastViewModel: ForecastViewModel
-) : RecyclerView.Adapter<ForecastItemHolder>() {
+class ForecastListAdapter @Inject constructor() : RecyclerView.Adapter<ForecastItemHolder>() {
 
-    private val list = forecastViewModel.forecastConditionList
+    val list: MutableList<Condition> = MutableList(10) { Condition.emptyCondition }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastItemHolder =
         ForecastItemHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_forecast, parent, false))
@@ -26,12 +22,7 @@ class ForecastListAdapter @Inject constructor(
         holder.bind(list[position].toString())
     }
 
-    override fun getItemCount(): Int = list.size.also {
-        Log.d("abc", "list size ${it}")
-    }
-    init {
-        Log.d("abc", list.toString())
-    }
+    override fun getItemCount(): Int = list.size
 }
 
 class ForecastItemHolder(
