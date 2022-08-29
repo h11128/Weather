@@ -20,7 +20,7 @@ class ForecastViewModel @Inject constructor(
     private val compositeDisposable = CompositeDisposable()
 
 
-    fun getTenDayWeatherFromNetwork() =
+    private fun getTenDayWeatherFromNetwork() =
         weatherRepository.getFutureWeather()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -30,7 +30,8 @@ class ForecastViewModel @Inject constructor(
                 }
 
             }
-            .subscribe({
+            .subscribe(
+                {
                 forecastConditionList.clear()
                 forecastConditionList.addAll(it)
                 forecastListAdapter.notifyItemRangeChanged(0, forecastConditionList.size)
@@ -42,7 +43,6 @@ class ForecastViewModel @Inject constructor(
 
     fun onResume() {
         compositeDisposable.add(getTenDayWeatherFromNetwork())
-
     }
 
     fun onRefresh(): Completable = Completable.fromCallable {

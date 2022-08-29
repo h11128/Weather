@@ -13,6 +13,7 @@ import com.jason.weather.WeatherApplication
 import com.jason.weather.databinding.FragmentUpcomingBinding
 import com.jason.weather.viewmodel.ForecastViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -36,17 +37,24 @@ class UpComingFragment : Fragment() {
                 recyclerView.adapter = listAdapter
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 refreshLayout.setOnRefreshListener {
+                    var disposable = Disposables.disposed()
+
                     forecastViewModel.onRefresh()
                         .delay(3, TimeUnit.SECONDS)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doOnTerminate { refreshLayout.isRefreshing = false }
+                        .doAfterTerminate {
+                            refreshLayout.isRefreshing = false
+                            disposable.dispose()
+                        }
                         .subscribe({
+
                             Toast.makeText(requireContext(), "Refresh Success", Toast.LENGTH_SHORT).show()
                         }, {
                             Toast.makeText(requireContext(), "Refresh Fail", Toast.LENGTH_SHORT).show()
                             it.printStackTrace()
                         })
+                        .also { disposable = it }
                 }
             }
             .root
