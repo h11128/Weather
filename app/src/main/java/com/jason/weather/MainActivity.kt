@@ -1,12 +1,11 @@
-package com.jason.weather.ui
+package com.jason.weather
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.tabs.TabLayoutMediator
-import com.jason.weather.R
-import com.jason.weather.WeatherApplication
 import com.jason.weather.databinding.ActivityMainBinding
+import com.jason.weather.ui.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,17 +17,10 @@ class MainActivity : AppCompatActivity() {
                 it.viewPager.adapter = SectionsPagerAdapter(this)
                 TabLayoutMediator(it.tabs, it.viewPager) { tab, position ->
                     when (position) {
-                        0 -> tab.text = "Current"
-                        else -> tab.text = "UpComing"
+                        0 -> tab.text = "Current Weather Condition"
+                        else -> tab.text = "UpComing 10 day forecast"
                     }
                 }.attach()
             }
-
-//        val fab: FloatingActionButton = binding.fab
-//
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//        }
     }
 }

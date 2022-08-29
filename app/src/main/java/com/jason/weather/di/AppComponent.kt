@@ -1,7 +1,7 @@
 package com.jason.weather.di
 
 import com.jason.weather.ui.CurrentFragment
-import com.jason.weather.ui.MainActivity
+import com.jason.weather.MainActivity
 import com.jason.weather.ui.UpComingFragment
 import dagger.Component
 import javax.inject.Singleton

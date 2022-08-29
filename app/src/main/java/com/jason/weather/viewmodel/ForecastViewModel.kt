@@ -1,6 +1,7 @@
 package com.jason.weather.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.jason.weather.model.toWeatherUiData
 import com.jason.weather.repo.WeatherRepository
 import com.jason.weather.ui.ForecastListAdapter
 import io.reactivex.Completable
@@ -15,10 +16,7 @@ class ForecastViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val forecastListAdapter: ForecastListAdapter
 ) : ViewModel() {
-    private val forecastConditionList = forecastListAdapter.list
-
     private val compositeDisposable = CompositeDisposable()
-
 
     private fun getTenDayWeatherFromNetwork() =
         weatherRepository.getFutureWeather()
@@ -26,19 +24,11 @@ class ForecastViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .map {
                 it.forecast.forecastday.map { forecastday ->
-                    forecastday.day.condition
+                    forecastday.toWeatherUiData()
                 }
-
             }
-            .subscribe(
-                {
-                forecastConditionList.clear()
-                forecastConditionList.addAll(it)
-                forecastListAdapter.notifyItemRangeChanged(0, forecastConditionList.size)
-            },
-                {
-                    it.printStackTrace()
-                })
+            .subscribe({ forecastListAdapter.updateList(it) },
+                { it.printStackTrace() })
             .also { compositeDisposable.add(it) }
 
     fun onResume() {

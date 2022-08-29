@@ -2,6 +2,8 @@ package com.jason.weather.viewmodel
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
+import com.jason.weather.model.WeatherUiData
+import com.jason.weather.model.toWeatherUiData
 import com.jason.weather.repo.WeatherRepository
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,7 +16,7 @@ import javax.inject.Singleton
 class CurrentViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) : ViewModel() {
-    val currentCondition: ObservableField<String> = ObservableField("")
+    val currentCondition: ObservableField<WeatherUiData> = ObservableField(WeatherUiData.emptyUiData)
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -22,13 +24,9 @@ class CurrentViewModel @Inject constructor(
         weatherRepository.getCurrentWeather()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map { it.current.condition.toString() }
-            .subscribe({
-                currentCondition.set(it)
-            },
-                {
-                    it.printStackTrace()
-                })
+            .map { it.current.toWeatherUiData() }
+            .subscribe({ currentCondition.set(it) },
+                { it.printStackTrace() })
             .also { compositeDisposable.add(it) }
 
     fun onResume() {

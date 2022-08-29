@@ -23,6 +23,8 @@ class UpComingFragment : Fragment() {
     @Inject
     lateinit var forecastViewModel: ForecastViewModel
 
+    private var disposable = Disposables.disposed()
+
     @Inject
     lateinit var listAdapter: ForecastListAdapter
 
@@ -37,8 +39,6 @@ class UpComingFragment : Fragment() {
                 recyclerView.adapter = listAdapter
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 refreshLayout.setOnRefreshListener {
-                    var disposable = Disposables.disposed()
-
                     forecastViewModel.onRefresh()
                         .delay(3, TimeUnit.SECONDS)
                         .subscribeOn(Schedulers.io())
@@ -48,7 +48,6 @@ class UpComingFragment : Fragment() {
                             disposable.dispose()
                         }
                         .subscribe({
-
                             Toast.makeText(requireContext(), "Refresh Success", Toast.LENGTH_SHORT).show()
                         }, {
                             Toast.makeText(requireContext(), "Refresh Fail", Toast.LENGTH_SHORT).show()

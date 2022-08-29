@@ -6,20 +6,26 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jason.weather.R
 import com.jason.weather.databinding.ItemForecastBinding
-import com.jason.weather.model.Condition
+import com.jason.weather.model.WeatherUiData
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ForecastListAdapter @Inject constructor() : RecyclerView.Adapter<ForecastItemHolder>() {
 
-    val list: MutableList<Condition> = MutableList(10) { Condition.emptyCondition }
+    private val list: MutableList<WeatherUiData> = MutableList(10) { WeatherUiData.emptyUiData }
+
+    fun updateList(newList: List<WeatherUiData>) {
+        list.clear()
+        list.addAll(newList)
+        notifyItemRangeChanged(0, list.size)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastItemHolder =
         ForecastItemHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_forecast, parent, false))
 
     override fun onBindViewHolder(holder: ForecastItemHolder, position: Int) {
-        holder.bind(list[position].toString())
+        holder.bind(list[position])
     }
 
     override fun getItemCount(): Int = list.size
@@ -28,7 +34,7 @@ class ForecastListAdapter @Inject constructor() : RecyclerView.Adapter<ForecastI
 class ForecastItemHolder(
     private val binding: ItemForecastBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(text: String) {
-        binding.itemText.text = text
+    fun bind(uiData: WeatherUiData) {
+        binding.data = uiData
     }
 }

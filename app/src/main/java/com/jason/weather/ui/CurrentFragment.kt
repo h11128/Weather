@@ -22,6 +22,8 @@ class CurrentFragment : Fragment() {
     @Inject
     lateinit var currentViewModel: CurrentViewModel
 
+    private var disposable = Disposables.disposed()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,11 +31,8 @@ class CurrentFragment : Fragment() {
         WeatherApplication.appComponent.inject(this)
         return DataBindingUtil.inflate<FragmentCurrentBinding>(inflater, R.layout.fragment_current, container, false)
             .apply {
-
                 viewModel = currentViewModel
                 refreshLayout.setOnRefreshListener {
-                    var disposable = Disposables.disposed()
-
                     currentViewModel.onRefresh()
                         .delay(3, TimeUnit.SECONDS)
                         .subscribeOn(Schedulers.io())
@@ -43,7 +42,6 @@ class CurrentFragment : Fragment() {
                             disposable.dispose()
                         }
                         .subscribe({
-
                             Toast.makeText(requireContext(), "Refresh Success", Toast.LENGTH_SHORT).show()
                         }, {
                             Toast.makeText(requireContext(), "Refresh Fail", Toast.LENGTH_SHORT).show()
